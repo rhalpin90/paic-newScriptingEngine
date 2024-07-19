@@ -1,0 +1,8 @@
+{
+    "extends": "./tsconfig.rhino.json",
+    "include": [
+        "./rhino.d.ts",
+        "../src/config-provider/**/*.js",
+        "config-provider.d.ts"
+    ],
+}

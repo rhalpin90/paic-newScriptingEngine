@@ -1,0 +1,14 @@
+{
+    "files": [],
+    "references": [
+        {
+            "path": "./meta/tsconfig.rhino.json"
+        },
+        {
+            "path": "./meta/tsconfig.config-provider.json"
+        },
+        {
+            "path": "./meta/tsconfig.decision-node.json"
+        }
+    ]
+}
