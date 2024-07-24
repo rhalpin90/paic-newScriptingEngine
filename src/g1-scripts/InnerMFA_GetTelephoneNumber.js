@@ -1,4 +1,8 @@
-(function () {
+var scriptOutcomes = {
+    OUTCOME: 'outcome',
+};
+
+function main() {
     var id = nodeState.get("_id");
     var identity = idRepository.getIdentity(id);
     var telephoneNumbers = identity.getAttributeValues("telephoneNumber");
@@ -9,5 +13,7 @@
     }
     
     nodeState.putShared('telephoneNumber', telephoneNumber);
-    action.goTo('outcome');
-})();
+    action.goTo(scriptOutcomes.OUTCOME);
+}
+
+main();

@@ -8,7 +8,8 @@ var identity = idRepository.getIdentity(id);
 var lockoutAttr = identity.getAttributeValues("fr-attr-str4");
 var lockoutInfo;
 
-if (lockoutAttr && lockoutAttr.length > 0) {
+function main() {
+    if (lockoutAttr && lockoutAttr.length > 0) {
     lockoutInfo = new XML(lockoutAttr[0]);
 } else {
     lockoutInfo = <InvalidPassword>
@@ -42,3 +43,6 @@ try {
     logger.error("Unable to update lockout info. " + e);
     action.goTo("error");
 }
+}
+
+main();
