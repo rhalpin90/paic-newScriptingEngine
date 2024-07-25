@@ -1,34 +1,36 @@
+var dateUtils = require('Library_DateUtils');
+
+var DAYS_UNTIL_PASSWORD_EXPIRES_KEY = 'daysUntilPasswordExpires';
+
 var scriptOutcomes = {
-  FALSE: 'false',
-  TRUE: 'true',
+    NOT_EXPIRED: 'not-expired',
+    WARNING: 'warning',
+    EXPIRED: 'expired'
 };
 
-var id = nodeState.get("_id");
-var identity = idRepository.getIdentity(id);
-var date = new java.util.Date();
-var dateFormat = new java.text.SimpleDateFormat("yyyyMMddHHmmss");  
-var attrIDate1 = identity.getAttributeValues("fr-attr-idate1");
-function main() {
-if (attrIDate1 === null || attrIDate1.isEmpty()) {
-  action.goTo(scriptOutcomes.TRUE);
-} else {
-  var attrIDate1Parsed = dateFormat.parse(attrIDate1.iterator().next());
-  //var differenceInMilliseconds = date.getTime() - attrIDate1Parsed.getTime();
+var userId = nodeState.get('_id');
+var identity = idRepository.getIdentity(userId);
+var passwordExpiration = identity.getAttributeValues('customAttributes.custom_passwordExpirationTime');
+var passwordLastChanged = identity.getAttributeValues('passwordLastChangedTime');
+logger.error("bbbbb" + passwordLastChanged);
+logger.error("aaaaa" + passwordExpiration);
 
-  if (date.getTime() >= attrIDate1Parsed.getTime()) {
-      action.goTo(scriptOutcomes.FALSE);
-  }
-  
-  // If the difference is greater than 30 days, set outcome to false
-  //if (differenceInMilliseconds > 30 * 24 * 60 * 60 * 1000) {
-  //  action = fr.Action.goTo('false').withErrorMessage('Password expired, ').build();
-  //}
-}
-}
+function main() {
+   
+    if (!passwordExpiration) {
+        action.goTo(scriptOutcomes.EXPIRED);
+        return;
+    }
+    var expirationDate = dateUtils.parseLdapStringToDate(passwordExpiration);
+    var daysUntilPasswordExpires = (+expirationDate - +new Date()) / (1000 * 60 * 60 * 24);
+    nodeState.putShared(DAYS_UNTIL_PASSWORD_EXPIRES_KEY, String(Math.ceil(daysUntilPasswordExpires)));
+    if (daysUntilPasswordExpires <= 0) {
+        action.goTo(scriptOutcomes.EXPIRED);
+    } else if (daysUntilPasswordExpires <= 7) {
+        action.goTo(scriptOutcomes.WARNING);
+    } else {
+        action.goTo(scriptOutcomes.NOT_EXPIRED);
+    }
+};
 
 main();
-
-
-
-
-
