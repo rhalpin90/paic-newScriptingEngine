@@ -1,15 +1,16 @@
 var outcomes = {
     LOCKED: "locked",
-    UNLOCKED: "unlocked"
+    UNLOCKED: "unlocked",
+    ERROR: "error"
 };
 
-var id = nodeState.get("_id");
+function main() {
+
+    var id = nodeState.get("_id");
 var identity = idRepository.getIdentity(id);
 var lockoutAttr = identity.getAttributeValues("fr-attr-str4");
 var lockoutInfo;
-
-function main() {
-    if (lockoutAttr && lockoutAttr.length > 0) {
+if (lockoutAttr && lockoutAttr.length > 0) {
     lockoutInfo = new XML(lockoutAttr[0]);
 } else {
     lockoutInfo = <InvalidPassword>
@@ -24,8 +25,7 @@ function main() {
 var currentCount = parseInt(lockoutInfo.InvalidCount);
 lockoutInfo.InvalidCount = currentCount + 1;
 lockoutInfo.LastInvalidAt = new Date().getTime();
-
-var maxAttempts = 4; 
+var maxAttempts = 5; 
 var outcome;
 
 if (currentCount + 1 >= maxAttempts) {
@@ -36,13 +36,14 @@ if (currentCount + 1 >= maxAttempts) {
 }
 
 identity.setAttribute("fr-attr-str4", [lockoutInfo.toString()]);
+
 try {
     identity.store();
     action.goTo(outcome);
 } catch(e) {
     logger.error("Unable to update lockout info. " + e);
-    action.goTo("error");
+    action.goTo(outcomes.ERROR);
 }
 }
-
+  
 main();

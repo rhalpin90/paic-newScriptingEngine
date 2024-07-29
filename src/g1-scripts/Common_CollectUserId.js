@@ -1,3 +1,8 @@
+/**
+ * @file This is the same as the Platform Username node but the label for the field is "User ID"
+ *   instead of "Username"
+ */
+
 var scriptOutcomes = {
     OUTCOME: 'outcome',
 };
