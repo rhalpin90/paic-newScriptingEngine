@@ -16,7 +16,8 @@ declare global {
     };
 
     const action: {
-        goTo: (outcome: string) => void
+        goTo: (outcome: string) => typeof action
+        withErrorMessage: (message: string) => typeof action
     };
 
     const scriptName: string;

@@ -4,6 +4,7 @@
         "./rhino.d.ts",
         "../src/decision-node/**/*.js",
         "../src/g1-scripts/**/*.js",
+        "../src/hp-scripts/**/*.js"
         "decision-node.d.ts"
     ]
 }

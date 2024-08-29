@@ -1,3 +1,9 @@
+var ScriptOutcomes = {
+    OUTCOME: 'outcome'
+};
+
+function main() {
+
 var id = nodeState.get("_id");
 var identity = idRepository.getIdentity(id);
 
@@ -7,4 +13,7 @@ try {
 } catch(e) {
     logger.error("Unable to set reset password status." + e)
 }
-action.goTo('outcome');
+action.goTo(ScriptOutcomes.OUTCOME);
+}
+
+main();
