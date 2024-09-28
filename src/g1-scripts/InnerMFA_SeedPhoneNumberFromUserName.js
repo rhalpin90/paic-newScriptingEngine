@@ -2,36 +2,26 @@ var scriptOutcomes = {
     OUTCOME: 'outcome'
 };
 
-function generateFakePhoneNumber(id) {
-    // Simple hash function
-    var hash = 0;
-    for (var i = 0; i < id.length; i++) {
-        var char = id.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-    }
-    
-    var phoneNumber = Math.abs(hash).toString().padStart(10, '0').slice(-10);
-    return phoneNumber;
-}
-
-function main() {
-    var id = nodeState.get("username");
-    logger.error("AAAAA" + id);
-    
-    var telephoneNumber = generateFakePhoneNumber(id);
-    
-    var maskedTelephoneNumber = "(" + telephoneNumber.substring(0, 3) + ") " +
-                                telephoneNumber.substring(3, 6) + "-" +
-                                telephoneNumber.substring(6);
-    
-    var messageText = "We've sent a One Time Password to " + maskedTelephoneNumber;
+function main(){
+    var id = nodeState.get('username').toString();
+    var maskedTelephoneNumber = "(***) ***-" + generateFourDigits(id);
+    var messageText = "We've sent a one-time password to " + maskedTelephoneNumber; 
 
     if (callbacks.isEmpty()) {
         callbacksBuilder.textOutputCallback(0, messageText);
         return;
     }
-    action.goTo(scriptOutcomes.OUTCOME);
+    action.goTo(scriptOutcomes.OUTCOME)
+}
+
+function generateFourDigits(username) {
+    var ascii1 = username.charCodeAt(0);
+    var ascii2 = username.charCodeAt(1);
+    var ascii3 = username.charCodeAt(2);
+    var ascii4 = username.charCodeAt(3);
+    var combined = (ascii1 * 1 + ascii2 * 2 + ascii3 * 3 + ascii4 * 4);
+    var fourDigitNumber = (combined * 123) % 10000;
+    return ('0000' + fourDigitNumber).slice(-4);
 }
 
 main();

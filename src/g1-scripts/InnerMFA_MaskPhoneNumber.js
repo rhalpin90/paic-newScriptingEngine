@@ -4,8 +4,8 @@ var scriptOutomes = {
 
 function main(){
     var telephoneNumber = nodeState.get("userIdentifier")
-    var maskedTelephoneNumber = "(***) ***-" + telephoneNumber.substring(telephoneNumber.length - 4)
-    var messageText = "We've sent a One Time Password to " + maskedTelephoneNumber; 
+    var maskedTelephoneNumber = "(***) ***-" + telephoneNumber.slice(-4)
+    var messageText = "We've sent a one-time password to " + maskedTelephoneNumber; 
 
     if (callbacks.isEmpty()) {
         callbacksBuilder.textOutputCallback(0, messageText);
