@@ -1,38 +1,31 @@
-var ScriptOutcomes = {
-    LOCKED: "locked",
-    UNLOCKED: "unlocked"
-};
+var scriptOutcomes = {
+    HARD_LOCK: 'hard_lock',
+    NO_LOCK: 'no_lock'
+}
 
 function main() {
-    var id = nodeState.get("_id");
+    var id = nodeState.get('id');
     var identity = idRepository.getIdentity(id);
-    var hardLockDate = identity.getAttributeValues("frIndexedMultivalued1") || [];
-    var lockStatus = identity.getAttributeValues("accountStatus");
+    var lockoutDates = identity.getAttributeValues('frIndexedMultivalued1') || [];
     var currentDate = new Date();
+    var lockoutTimer = new Date(currentDate - 24 * 60 * 60 * 1000);
 
-    // this isn't working
-    hardLockDate.push(currentDate.toISOString());
-
-    var twentyFourHoursAgo = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
-
-    hardLockDate = hardLockDate.filter(function(date) {
-        return new Date(date) >= twentyFourHoursAgo;
-    });
-
-    if (hardLockDate.length > 3) {
-        hardLockDate = hardLockDate.slice(-3);
+    if (lockoutDates.length > 2) {
+        lockoutDates = lockoutDates.slice (-2);
     }
+    lockoutDates.push();
 
-    var shouldLock = hardLockDate.length === 3 && 
-        (new Date(hardLockDate[0]) >= twentyFourHoursAgo);
+    var shouldLock = lockoutDates.length === 3 && 
+        (new Date(lockoutDates[0]) >= lockoutTimer);
 
-    identity.setAttribute("frIndexedMultivalued1", hardLockDate);
+    identity.setAttribute('frIndexedMultivalued1', lockoutDates);
     if (shouldLock) {
-        identity.setAttribute("accountStatus", );
-        return ScriptOutcomes.LOCKED;
+        identity.setAttribute('accountStatus', ['inactive']);
+        action.goTo(scriptOutcomes.HARD_LOCK);
+        return;
     }
 
-    return ScriptOutcomes.UNLOCKED;
+    action.goTo(scriptOutcomes.NO_LOCK);
 }
 
 main();

@@ -12,6 +12,7 @@ function main() {
         return;
     }
     action.goTo(scriptOutcomes.NO_EMAIL);
+    nodeState.putShared('oldEmail', email);
 }
 
 main ();
